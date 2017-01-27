@@ -32,17 +32,7 @@ defmodule Server.RoomChannel do
 
   intercept ["presence_diff"]
   def handle_out("presence_diff", payload, socket) do
-    final_payload = Enum.reduce([:leaves, :joins], payload, fn collection_key, payload ->
-      Map.keys(payload[collection_key])
-      |> Enum.each(fn id ->
-        meta_record = payload[collection_key][id] 
-        record = fetch(socket.topic, Presence.list(socket))
-        |> Enum.find(fn user ->
-          (user |> elem(1))[:metas][:phx_ref] == meta_record[:phx_ref]
-        end)
-      payload
-    end)
-    push socket, "presence_diff", final_payload
+    push socket, "presence_diff", payload
     {:noreply, socket}
   end
 

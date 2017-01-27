@@ -11,6 +11,7 @@ var token = $('meta[name=channel_token]').attr('content');
 var socket = new Socket('/socket', {params: {token: token}});
 
 $(function(){
+  window.online_users = $("#online-users")
   if ($("#page-authenticated")) {
     socket.connect()
   }
@@ -33,29 +34,45 @@ channel.on("new_msg", payload => {
   messagesContainer.appendChild(messageItem)
 })
 
+window.attachUser = function(phx_ref) {
+  var user = online_users.find(`[phx_ref='${phx_ref}']`)
+  if (user.length == 0) {
+    var usernode = $(
+      `<li phx_ref='${phx_ref}'>${phx_ref}</li>`
+    )
+    online_users.append(usernode)
+    usernode.on("click", function(e){
+      e.preventDefault()
+      channel.push("direct_msg", {email: email, body: chatInput.value})
+    })
+  }
+}
+
+window.removeUser = function(phx_ref) {
+  online_users.find(`[phx_ref='${phx_ref}']`).remove()
+}
+
 channel.on("presence_state", payload => {
   Object.keys(payload).forEach(key => {
-    var online_users = $("#online-users")
-    var userdata = payload[key]["user"]
-    var email = userdata['email']
-    var id = userdata['id']
-    var user = online_users.find(`[email='${email}']`)
-    if (user.length == 0) {
-      var usernode = $(
-        `<li userid='${id}' email='${email}'>${email}</li>`
-      )
-      online_users.append(usernode)
-      usernode.on("click", function(e){
-        e.preventDefault()
-        channel.push("direct_msg", {email: email, body: chatInput.value})
-      })
-    }
+    var phx_ref = payload[key]['metas'][0]['phx_ref']
+    attachUser(phx_ref)
   })
 })
 
 channel.on("presence_diff", payload => {
   console.log('presence diff')
   console.dir(payload)
+  window.payload = payload
+  Object.keys(payload["joins"]).forEach(key => {
+    payload["joins"][key]["metas"].forEach(meta => {
+      attachUser(meta["phx_ref"])
+    })
+  })
+  Object.keys(payload["leaves"]).forEach(key => {
+    payload["leaves"][key]["metas"].forEach(meta => {
+      removeUser(meta["phx_ref"])
+    })
+  })  
 })
 
 channel.on("direct_msg", payload => {
@@ -64,7 +81,7 @@ channel.on("direct_msg", payload => {
 })
 
 channel.join()
-  .receive("ok", resp => { })
+  .receive("ok", resp => { console.log(resp) })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
 
