@@ -72,8 +72,18 @@ channel.on("new_msg", payload => {
   messagesContainer.appendChild(messageItem)
 })
 
+channel.on("presence_state", payload => {
+  console.dir("presence state")
+  console.dir(payload)
+})
+
+channel.on("presence_diff", payload => {
+  console.dir("presence state")
+  console.dir(payload)
+})
+
 channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
+  .receive("ok", resp => { })
   .receive("error", resp => { console.log("Unable to join", resp) })
 
 export default socket

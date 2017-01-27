@@ -9,4 +9,3 @@
 
 <input id="chat-input" type="text"></input>
 
-<div class="hidden" data-token='<%= %>'></div>

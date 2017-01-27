@@ -10,7 +10,6 @@ defmodule Server.PageController do
   plug Guardian.Plug.EnsureAuthenticated, handler: __MODULE__
 
   def index(conn, _params) do
-    IO.puts inspect conn
     user = Guardian.Plug.current_resource(conn)
     render conn, "index.html", user: user
   end

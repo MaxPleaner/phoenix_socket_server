@@ -5,6 +5,7 @@ defmodule SocketUtil.RegisterRooms do
     quote do
       for name <- unquote(names) do
         def join(name, _message, socket) do
+          send(self, :after_join)
           { :ok, socket }
         end
       end
