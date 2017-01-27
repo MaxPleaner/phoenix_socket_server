@@ -7,5 +7,9 @@
 
 <div id="messages"></div>
 
+<ul id="online-users">
+  
+</ul>
+
 <input id="chat-input" type="text"></input>
 

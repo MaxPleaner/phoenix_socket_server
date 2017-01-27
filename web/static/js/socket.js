@@ -9,55 +9,16 @@ import {Socket} from "phoenix"
 
 var token = $('meta[name=channel_token]').attr('content');
 var socket = new Socket('/socket', {params: {token: token}});
-// When you connect, you'll often need to authenticate the client.
-// For example, imagine you have an authentication plug, `MyAuth`,
-// which authenticates the session and assigns a `:current_user`.
-// If the current user exists you can assign the user's token in
-// the connection for use in the layout.
-//
-// In your "web/router.ex":
-//
-//     pipeline :browser do
-//       ...
-//       plug MyAuth
-//       plug :put_user_token
-//     end
-//
-//     defp put_user_token(conn, _) do
-//       if current_user = conn.assigns[:current_user] do
-//         token = Phoenix.Token.sign(conn, "user socket", current_user.id)
-//         assign(conn, :user_token, token)
-//       else
-//         conn
-//       end
-//     end
-//
-// Now you need to pass this token to JavaScript. You can do so
-// inside a script tag in "web/templates/layout/app.html.eex":
-//
-//     <script>window.userToken = "<%= assigns[:user_token] %>";</script>
-//
-// You will need to verify the user token in the "connect/2" function
-// in "web/channels/user_socket.ex":
-//
-//     def connect(%{"token" => token}, socket) do
-//       # max_age: 1209600 is equivalent to two weeks in seconds
-//       case Phoenix.Token.verify(socket, "user socket", token, max_age: 1209600) do
-//         {:ok, user_id} ->
-//           {:ok, assign(socket, :user, user_id)}
-//         {:error, reason} ->
-//           :error
-//       end
-//     end
-//
-// Finally, pass the token on connect as below. Or remove it
-// from connect if you don't care about authentication.
 
+$(function(){
+
+})
 socket.connect()
 
 let channel           = socket.channel("room:lobby", {})
 let chatInput         = document.querySelector("#chat-input")
 let messagesContainer = document.querySelector("#messages")
+
 
 chatInput.addEventListener("keypress", event => {
   if(event.keyCode === 13){
@@ -73,17 +34,25 @@ channel.on("new_msg", payload => {
 })
 
 channel.on("presence_state", payload => {
-  console.dir("presence state")
-  console.dir(payload)
+  Object.keys(payload).forEach(key => {
+    var online_users = $("#online-users")
+    var email = payload[key]["user"]['email']
+    var user = online_users.find(`[email='${email}']`)
+    if (user.length == 0) {
+      online_users.append($(
+        `<li email='${email}'>${email}</li>`
+      ))
+    }
+  })
 })
 
 channel.on("presence_diff", payload => {
-  console.dir("presence state")
-  console.dir(payload)
+  window.presence_diff = payload
 })
 
 channel.join()
   .receive("ok", resp => { })
   .receive("error", resp => { console.log("Unable to join", resp) })
+
 
 export default socket
