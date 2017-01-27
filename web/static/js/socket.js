@@ -11,14 +11,14 @@ var token = $('meta[name=channel_token]').attr('content');
 var socket = new Socket('/socket', {params: {token: token}});
 
 $(function(){
-
+  if ($("#page-authenticated")) {
+    socket.connect()
+  }
 })
-socket.connect()
 
 let channel           = socket.channel("room:lobby", {})
 let chatInput         = document.querySelector("#chat-input")
 let messagesContainer = document.querySelector("#messages")
-
 
 chatInput.addEventListener("keypress", event => {
   if(event.keyCode === 13){
@@ -36,18 +36,31 @@ channel.on("new_msg", payload => {
 channel.on("presence_state", payload => {
   Object.keys(payload).forEach(key => {
     var online_users = $("#online-users")
-    var email = payload[key]["user"]['email']
+    var userdata = payload[key]["user"]
+    var email = userdata['email']
+    var id = userdata['id']
     var user = online_users.find(`[email='${email}']`)
     if (user.length == 0) {
-      online_users.append($(
-        `<li email='${email}'>${email}</li>`
-      ))
+      var usernode = $(
+        `<li userid='${id}' email='${email}'>${email}</li>`
+      )
+      online_users.append(usernode)
+      usernode.on("click", function(e){
+        e.preventDefault()
+        channel.push("direct_msg", {email: email, body: chatInput.value})
+      })
     }
   })
 })
 
 channel.on("presence_diff", payload => {
-  window.presence_diff = payload
+  console.log('presence diff')
+  console.dir(payload)
+})
+
+channel.on("direct_msg", payload => {
+  console.log("direct msg")
+  console.dir(payload)
 })
 
 channel.join()

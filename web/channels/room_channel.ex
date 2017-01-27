@@ -16,7 +16,6 @@ defmodule Server.RoomChannel do
   end
 
   def handle_info(:after_join, socket) do
-    IO.puts inspect fetch(socket.topic, Presence.list(socket))
     push socket, "presence_state", fetch(socket.topic, Presence.list(socket))
     {:ok, _} = Presence.track(
       socket,
@@ -31,8 +30,19 @@ defmodule Server.RoomChannel do
     {:noreply, socket}
   end
 
-  def handle_out("new_msg", payload, socket) do
-    push socket, "new_msg", payload
+  intercept ["presence_diff"]
+  def handle_out("presence_diff", payload, socket) do
+    final_payload = Enum.reduce([:leaves, :joins], payload, fn collection_key, payload ->
+      Map.keys(payload[collection_key])
+      |> Enum.each(fn id ->
+        meta_record = payload[collection_key][id] 
+        record = fetch(socket.topic, Presence.list(socket))
+        |> Enum.find(fn user ->
+          (user |> elem(1))[:metas][:phx_ref] == meta_record[:phx_ref]
+        end)
+      payload
+    end)
+    push socket, "presence_diff", final_payload
     {:noreply, socket}
   end
 
