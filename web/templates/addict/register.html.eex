@@ -20,6 +20,7 @@
           <button id="btn-register" class="addict btn">Register</button>
         </div>
       </div>
+       <a href="/login">login</a>
      </div>
   </div>
 </div>

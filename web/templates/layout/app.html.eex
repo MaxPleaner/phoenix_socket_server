@@ -9,6 +9,10 @@
 
     <title>Hello Server!</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <%= if user = current_user(@conn) do %>
+      <%= tag :meta, name: "channel_token",
+          content: Phoenix.Token.sign(@conn, "user", user.id) %>
+    <% end %>
   </head>
 
   <body>

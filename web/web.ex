@@ -33,6 +33,7 @@ defmodule Server.Web do
       alias Server.Repo
       import Ecto
       import Ecto.Query
+      import Addict.Helper
 
       import Server.Router.Helpers
       import Server.Gettext
@@ -48,7 +49,7 @@ defmodule Server.Web do
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
-
+      import Addict.Helper
       import Server.Router.Helpers
       import Server.ErrorHelpers
       import Server.Gettext

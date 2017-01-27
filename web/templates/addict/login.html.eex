@@ -17,6 +17,7 @@
         </div>
         <a class="addict link" href="/recover_password">Forgot your password?</a>
       </div>
+      <a href="/register"> register </a>
      </div>
   </div>
 </div>
