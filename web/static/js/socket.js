@@ -34,11 +34,11 @@ channel.on("new_msg", payload => {
   messagesContainer.appendChild(messageItem)
 })
 
-window.attachUser = function(phx_ref) {
+window.attachUser = function(phx_ref, email) {
   var user = online_users.find(`[phx_ref='${phx_ref}']`)
   if (user.length == 0) {
     var usernode = $(
-      `<li phx_ref='${phx_ref}'>${phx_ref}</li>`
+      `<li phx_ref='${phx_ref}'>${email}</li>`
     )
     online_users.append(usernode)
     usernode.on("click", function(e){
@@ -54,8 +54,10 @@ window.removeUser = function(phx_ref) {
 
 channel.on("presence_state", payload => {
   Object.keys(payload).forEach(key => {
-    var phx_ref = payload[key]['metas'][0]['phx_ref']
-    attachUser(phx_ref)
+    var user = payload[key]['metas'][0]
+    var phx_ref = user['phx_ref']
+    var email = user['email']
+    attachUser(phx_ref, email)
   })
 })
 
@@ -65,7 +67,7 @@ channel.on("presence_diff", payload => {
   window.payload = payload
   Object.keys(payload["joins"]).forEach(key => {
     payload["joins"][key]["metas"].forEach(meta => {
-      attachUser(meta["phx_ref"])
+      attachUser(meta["phx_ref"], meta["email"])
     })
   })
   Object.keys(payload["leaves"]).forEach(key => {

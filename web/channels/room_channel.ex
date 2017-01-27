@@ -16,11 +16,14 @@ defmodule Server.RoomChannel do
   end
 
   def handle_info(:after_join, socket) do
-    push socket, "presence_state", fetch(socket.topic, Presence.list(socket))
+    push socket, "presence_state", online_users(socket)
     {:ok, _} = Presence.track(
       socket,
       socket.assigns.current_user.id,
-      %{ online_at: inspect(System.system_time(:seconds)) }
+      %{
+        online_at: inspect(System.system_time(:seconds)),
+        email: socket.assigns.current_user.email
+      }
     )
     {:noreply, socket}
   end
@@ -36,7 +39,8 @@ defmodule Server.RoomChannel do
     {:noreply, socket}
   end
 
-  def fetch(_topic, entries) do
+  def online_users(socket) do
+    entries = Presence.list(socket)
     query =
       from u in User,
         where: u.id in ^Map.keys(entries),
