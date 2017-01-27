@@ -1,9 +1,11 @@
 defmodule Server.RoomChannel do
+
+  alias SocketUtil.{RegisterRooms,UnknownRoom}
+
   use Phoenix.Channel
 
-  def join("room:lobby", _message, socket) do
-    {:ok, socket}
-  end
+  use RegisterRooms, ["room:lobby"]
+
   def join("room:" <> _private_room_id, _params, _socket) do
     {:error, %{reason: "unauthorized"}}
   end
@@ -17,4 +19,5 @@ defmodule Server.RoomChannel do
     push socket, "new_msg", payload
     {:noreply, socket}
   end
+
 end

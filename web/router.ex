@@ -1,5 +1,7 @@
 defmodule Server.Router do
   use Server.Web, :router
+    use Addict.RoutesHelper
+
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -13,9 +15,13 @@ defmodule Server.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/" do
+    pipe_through :browser # Use the default browser stack
+    addict :routes
+  end
+
   scope "/", Server do
     pipe_through :browser # Use the default browser stack
-
     get "/", PageController, :index
   end
 
