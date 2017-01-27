@@ -33,4 +33,14 @@ config :addict,
   repo: Server.Repo,
   from_email: "no-reply@example.com", # CHANGE THIS
   generate_csrf_token: (fn -> Phoenix.Controller.get_csrf_token end),
-  mail_service: nil
+  mail_service: nil,
+  post_login: &(Callbacks.PostLogin.run/3),
+  post_logout: &(Callbacks.PostLogout.run/3),
+  post_register: &(Callbacks.PostRegister.run/3)
+
+config :guardian, Guardian,
+  issuer: "MyApp",
+  ttl: { 30, :days },
+  allowed_drift: 2000,
+  secret_key: System.get_env("GUARDIAN_SECRET") || "dev",
+  serializer: Server.GuardianSerializer
