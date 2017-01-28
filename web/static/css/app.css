@@ -1,1 +1,13 @@
 /* This file is for your main application css. */
+
+.hidden {
+  display: none;
+}
+
+.direct-msg-box {
+  border: 1px solid black;
+  display: block;
+  min-width: 50px;
+  min-height: 25px;
+  background-color: green;
+}

@@ -3,14 +3,15 @@
 <form action="/logout" method="POST">
   <input type="hidden" name="_method" value="delete">
   <input type="hidden" name="_csrf_token" value="<%= get_csrf_token() %>">
-
   <input type="submit" value="logout">
 </form>
+
+<input id="chat-input" type="text"></input>
 
 <div id="messages"></div>
 
 <ul id="online-users"></ul>
 
-<input id="chat-input" type="text"></input>
+<div id="direct-messages"></div>
 
-<span id="page-authenticated"></span>
+<span id="page-authenticated" current-user-email='<%= current_user(@conn).email %>'></span>

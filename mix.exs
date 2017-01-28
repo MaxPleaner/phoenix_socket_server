@@ -38,7 +38,6 @@ defmodule Server.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:addict, "~> 0.3"},
-     {:guardian, "~> 0.14"},
      {:mailgun, github: "chrismccord/mailgun", branch: "master", override: true},
 
      {:cowboy, "~> 1.0"}]
