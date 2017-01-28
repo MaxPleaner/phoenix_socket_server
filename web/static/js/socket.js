@@ -83,10 +83,8 @@ function init() {
 
   window.addIncomingDirectMessageListener = function(toUserEmail, roomName) {
     channel.on( roomName, payload => {
-      console.log("DIRECT MESSAGE")
-      console.log(roomName)
-      console.dir(payload)
-      console.log("---")
+      var msg = payload.body
+      console.log(`${msg} from ${roomName}`)
     })
   }
   
@@ -109,8 +107,6 @@ function init() {
   })
 
   channel.on("presence_diff", payload => {
-    console.log('presence diff')
-    console.dir(payload)
     window.payload = payload
     Object.keys(payload["joins"]).forEach(key => {
       payload["joins"][key]["metas"].forEach(meta => {
@@ -125,7 +121,7 @@ function init() {
   })
 
   channel.join()
-    .receive("ok", resp => { console.log(resp) })
+    .receive("ok", resp => { console.log("connected to channel") })
     .receive("error", resp => { console.log("Unable to join", resp) })
 }
 
