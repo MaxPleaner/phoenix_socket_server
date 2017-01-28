@@ -11,15 +11,15 @@ function init() {
 
   chatInput.on("keypress", event => {
     if(event.keyCode === 13){
-      channel.push("global_msg", {body: chatInput.value})
-      chatInput.value = ""
+      channel.push("global_msg", {body: chatInput.val()})
+      chatInput.val("")
     }
   })
 
   channel.on("global_msg", payload => {
     let messageItem = document.createElement("li");
     messageItem.innerText = `[${Date()}] ${payload.body}`
-    messagesContainer.appendChild(messageItem)
+    messagesContainer.append(messageItem)
   })
 
   window.attachUser = function(email) {
@@ -53,13 +53,14 @@ function init() {
     var roomName = `direct_msg-${[currentUserEmail, toUserEmail].sort().join("-")}`
     var directMessageBox = $(`
       <div class="hidden direct-msg-box hidden" email='${toUserEmail}' room='${roomName}'>
+        <b>${toUserEmail} direct messages:</b>
         <ul class='direct-msg-list'>
         </ul>
         <input class='send-direct-message' type='text' placeholder='send-direct-message'
       </div>
     `)
     directMessages.append(directMessageBox)
-    addIncomingDirectMessageListener(toUserEmail, roomName)
+    addIncomingDirectMessageListener(roomName)
     addOutgoingDirectMessageListener(directMessageBox)
   }
 
@@ -78,16 +79,24 @@ function init() {
         channel.push('direct_msg', {email: email, body: el.val()})
         el.val("")
       }
-    })
+    }) 
   }
 
-  window.addIncomingDirectMessageListener = function(toUserEmail, roomName) {
+  window.addIncomingDirectMessageListener = function(roomName) {
     channel.on( roomName, payload => {
       var msg = payload.body
-      console.log(`${msg} from ${roomName}`)
+      var email = payload.email
+      var directMessageBox = directMessages.find(`[room='${roomName}']`)
+      directMessageBox.append(buildMessageNode(msg, email))
     })
   }
   
+  window.buildMessageNode = function(msg, email) {
+    return $(`
+      <li>${email} says: ${msg} </li>
+    `)
+  }
+
   window.removeIncomingDirectMessageListener = function(email) {
     var roomName = `direct_msg-${[currentUserEmail, email].sort().join("-")}`
     channel.off(roomName)

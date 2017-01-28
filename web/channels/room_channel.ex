@@ -38,20 +38,21 @@ defmodule Server.RoomChannel do
     IO.puts inspect room_id
     room_name = "direct_msg-" <> room_id
     Server.Endpoint.broadcast("users_socket:#{email}", "new_msg", %{"body" => body, "email" => email})
-    push socket, room_name, %{body: body }
+    push socket, room_name, %{"body" => body, "email" => email }
     {:noreply, socket}
   end
 
   intercept ["direct_msg"]
-  def handle_out("direct_msg-" <> msg_id, %{"body" => body, "email" => email}, socket) do
+  def handle_out("direct_msg-" <> msg_id, params, socket) do
     if Enum.member?(String.split(msg_id, "-"), socket.assigns.current_user) do
-      push socket, "direct_msg-#{msg_id}", %{"body" => body}
+      push socket, "direct_msg-#{msg_id}", params
     end
     {:noreply, socket}
   end
 
   def handle_in(unknown, params, socket) do
     IO.puts "\n\nUNKNOWN MESSAGE: #{unknown}, params: #{inspect params}\n\n"
+    {:noreply, socket}
   end 
 
   def online_users(socket) do
