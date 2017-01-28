@@ -1,38 +1,38 @@
-defmodule AuthCallbacks do  
+# defmodule AuthCallbacks do  
 
-  defmodule PostLogin do
-    import Server.Router.Helpers
-    use Phoenix.Controller
+#   defmodule PostLogin do
+#     import Server.Router.Helpers
+#     use Phoenix.Controller
     
-    def run(conn, :ok, model) do
-    end
+#     def run(conn, :ok, model) do
+#     end
 
-    def run(conn, :error, errors) do
-    end
+#     def run(conn, :error, errors) do
+#     end
 
-  end
+#   end
 
-  defmodule PostLogout do
-    import Server.Router.Helpers
-    use Phoenix.Controller
-    def run(conn, :ok, model) do
-    end
+#   defmodule PostLogout do
+#     import Server.Router.Helpers
+#     use Phoenix.Controller
+#     def run(conn, :ok, model) do
+#     end
 
-    def run(conn, :error, errors) do
-    end
+#     def run(conn, :error, errors) do
+#     end
 
-  end
+#   end
   
-  defmodule PostRegister do
-    import Server.Router.Helpers
-    use Phoenix.Controller
+#   defmodule PostRegister do
+#     import Server.Router.Helpers
+#     use Phoenix.Controller
 
-    def run(conn, :ok, model) do
-    end
+#     def run(conn, :ok, model) do
+#     end
 
-    def run(conn, :error, errors) do
-    end
+#     def run(conn, :error, errors) do
+#     end
 
-  end
+#   end
 
-end
+# end

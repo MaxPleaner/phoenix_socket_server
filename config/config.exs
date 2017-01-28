@@ -33,7 +33,7 @@ config :addict,
   repo: Server.Repo,
   from_email: "no-reply@example.com", # CHANGE THIS
   generate_csrf_token: (fn -> Phoenix.Controller.get_csrf_token end),
-  mail_service: nil,
-  post_login: &(AuthCallbacks.PostLogin.run/3),
-  post_logout: &(AuthCallbacks.PostLogout.run/3),
-  post_register: &(AuthCallbacks.PostRegister.run/3)
+  mail_service: nil
+  # post_login: &(AuthCallbacks.PostLogin.run/3),
+  # post_logout: &(AuthCallbacks.PostLogout.run/3),
+  # post_register: &(AuthCallbacks.PostRegister.run/3)
