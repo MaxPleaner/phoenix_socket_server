@@ -2,7 +2,7 @@
 
 This is an app I built to practice / learn Phoenix and Elixir. There's very little pizazz - all the Javascript is in one 200-line file and there's hardly any CSS. But that's the way I like it. 
 
-Basically the app authenticates you, then shows you a list of online users. You can send them direct messages, which are persisted, and messages can be deleted by the sender. That's the gist of it.
+Basically the app authenticates you, then shows you a list of online users. You can send them direct messages, which are persisted, and messages can be deleted by the sender. All this in realtime over websockets of course. That's the gist of it.
 
 This is deployed to heroku: [hidden-inlet-64920.herokuapp.com](https://hidden-inlet-64920.herokuapp.com)
 
