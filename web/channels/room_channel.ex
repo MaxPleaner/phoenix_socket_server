@@ -36,6 +36,26 @@ defmodule Server.RoomChannel do
     {:noreply, socket}
   end
 
+  def handle_in("delete_msg", %{"msgId" => msgId}, socket) do
+    email = socket.assigns.current_user.email
+    msg = Repo.get Message, msgId
+    if msg && (email == msg.fromEmail) do
+      Repo.delete!(msg)
+      broadcast! socket, "delete_msg_confirmed-#{msgId}", %{}
+    end
+    {:noreply, socket}
+  end
+
+  #   def delete(conn, params) do
+  #   msg = Repo.get Message, params["id"]
+  #   if msg do
+  #     Repo.delete!(msg)
+  #   end
+  #   conn
+  #   |> render("destroyed.json", message: %{id: msg.id})
+  # end
+
+
   def send_if_authenticated(socket, room_name, room_id, params) do
     if Enum.member?(String.split(room_id, "-"), socket.assigns.current_user.email) do
       msg_record = %Message{
@@ -43,8 +63,8 @@ defmodule Server.RoomChannel do
         body: params["body"],
         room: room_id
       }
-      Repo.insert!(msg_record)
-      push socket, room_name, params
+      msg_record = Repo.insert!(msg_record)
+      broadcast! socket, room_name, Map.put(params, "id", msg_record.id)
     end
     {:noreply, socket}
   end

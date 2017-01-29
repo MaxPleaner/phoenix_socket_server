@@ -75,7 +75,7 @@ function init() {
 
   window.removeDirectMessageBox = function(email) {
     var directMessageBox = directMessages.find(`[email='${email}']`)
-    directMessageBox.remove(true, true)
+    directMessageBox.remove()
     removeIncomingDirectMessageListener(email)
   }
 
@@ -106,34 +106,25 @@ function init() {
   }
 
   window.addMsgDeleteListener = function(msgNode, msgId) {
+    channel.on(`delete_msg_confirmed-${msgId}`, (payload) => {
+      msgNode.remove()
+    })
     var button = msgNode.find(".delete-msg")
     button.on("click", (e) => {
-      if (confirm("are you sure?")){
-        sendDeleteMsgEvent(msgId, (data, status, xhr) => {
-          if (xhr.status == 200) {
-            msgNode.remove()  
-          }
-        })
+      if (confirm("are you sure")) {
+        channel.push(`delete_msg`, {msgId: msgId})
       }
     })
   }
-
-  window.sendDeleteMsgEvent = function(msgId, fn) {
-    var url = `${location.protocol}//${location.host}/messages/${msgId}`
-    $.ajax({
-      url: url,
-      data: {
-        "_csrf_token": csrfToken
-      },
-      type: "DELETE",
-      success: fn
-    })
-  }
   
-  window.buildMessageNode = function(msg, msgId, fromEmail) { 
+  window.buildMessageNode = function(msg, msgId, fromEmail) {
+    var deleteBtn
+    if (fromEmail == currentUserEmail) {
+      deleteBtn = `<button class="delete-msg" msgId='${msgId}'>X</button>`
+    } else { deleteBtn = "" }
     var msgNode = $(`
       <li>
-        <button class="delete-msg" msgId='${msgId}'>X</button>
+        ${deleteBtn}
         ${fromEmail} says: ${msg}
       </li>
     `)

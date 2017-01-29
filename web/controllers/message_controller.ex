@@ -19,15 +19,6 @@ defmodule Server.MessageController do
     end
   end
 
-  def delete(conn, params) do
-    msg = Repo.get Message, params["id"]
-    if msg do
-      Repo.delete!(msg)
-    end
-    conn
-    |> render("destroyed.json", message: %{id: msg.id})
-  end
-
   def index(conn, _params) do
     conn
     |> put_status(422)
