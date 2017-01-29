@@ -19,4 +19,11 @@ defmodule Server.MessageView do
       body: message.body,
       room: message.room}
   end
+
+  def render("unauthenticated.json", %{reason: reason}) do
+    %{
+      error: "unauthenticated",
+      reason: reason
+    }
+  end
 end
