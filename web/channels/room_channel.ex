@@ -5,7 +5,7 @@ defmodule Server.RoomChannel do
   import Util.TypeOf
 
   alias SocketUtil.{RegisterRooms}
-  alias Server.{Presence,Repo,User}
+  alias Server.{Presence,Repo,User,Message}
 
   use Phoenix.Channel
 
@@ -32,14 +32,19 @@ defmodule Server.RoomChannel do
     fromEmail = socket.assigns.current_user.email
     room_id = Enum.sort([fromEmail, toEmail]) |> Enum.join("-")
     room_name = "direct_msg-" <> room_id
-    broadcast! socket, room_name, %{"body" => body, "fromEmail" => fromEmail }
+    send_if_authenticated socket, room_name, room_id, %{"body" => body, "fromEmail" => fromEmail }
     {:noreply, socket}
   end
 
-  intercept ["direct_msg"]
-  def handle_out("direct_msg-" <> msg_id, params, socket) do
-    if Enum.member?(String.split(msg_id, "-"), socket.assigns.current_user) do
-      push socket, "direct_msg-#{msg_id}", params
+  def send_if_authenticated(socket, room_name, room_id, params) do
+    if Enum.member?(String.split(room_id, "-"), socket.assigns.current_user.email) do
+      msg_record = %Message{
+        fromEmail: params["fromEmail"],
+        body: params["body"],
+        room: room_id
+      }
+      Repo.insert!(msg_record)
+      push socket, room_name, params
     end
     {:noreply, socket}
   end

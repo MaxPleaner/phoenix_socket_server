@@ -1,6 +1,10 @@
 defmodule Server.MessageView do
   use Server.Web, :view
 
+  def render("missing_params.json", missing_params) do
+    missing_params
+  end
+
   def render("index.json", %{messages: messages}) do
     %{data: render_many(messages, Server.MessageView, "message.json")}
   end

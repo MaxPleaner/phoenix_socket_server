@@ -5,7 +5,7 @@ defmodule Server.Message do
     field :fromEmail, :string
     field :body, :string
     field :room, :string
-
+    has_one :sender, Server.User, foreign_key: :email, references: :fromEmail
     timestamps()
   end
 

@@ -4,7 +4,7 @@ defmodule Server.User do
   schema "users" do
     field :encrypted_password, :string
     field :email, :string
-
+    has_many :messages, Server.Message, foreign_key: :fromEmail, references: :email
     timestamps()
   end
 

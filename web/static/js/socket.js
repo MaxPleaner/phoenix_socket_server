@@ -45,10 +45,11 @@ function init() {
   }
 
   window.attachDirectMessageBox = function(toUserEmail) {
-    var roomName = `direct_msg-${[currentUserEmail, toUserEmail].sort().join("-")}`
+    var roomId = [currentUserEmail, toUserEmail].sort().join("-")
+    var roomName = `direct_msg-${roomId}`
     if (directMessages.find(`[room='${roomName}']`).length == 0) {    
       var directMessageBox = $(`
-        <div class="hidden direct-msg-box hidden" email='${toUserEmail}' room='${roomName}'>
+        <div class="hidden direct-msg-box hidden" email='${toUserEmail}' roomId='${roomId}' room='${roomName}'>
           <b>${toUserEmail} direct messages:</b>
           <ul class='direct-msg-list'>
           </ul>
@@ -58,7 +59,19 @@ function init() {
       directMessages.append(directMessageBox)
       addIncomingDirectMessageListener(roomName)
       addOutgoingDirectMessageListener(directMessageBox)
+      initialMessageLoad(directMessageBox, roomId)
     }
+  }
+
+  window.initialMessageLoad = function(directMessageBox, roomId) {
+    var url = `${location.protocol}//${location.host}/messages`
+    var params = { room: roomId }
+    console.log(url)
+    $.get(url, params, function(response) {
+      response.data.forEach(function(msg) {
+        addMessage(msg.body, msg.fromEmail, `direct_msg-${roomId}`)
+      })
+    })
   }
 
   window.removeDirectMessageBox = function(email) {
@@ -83,9 +96,13 @@ function init() {
     channel.on( roomName, payload => {
       var msg = payload.body
       var fromEmail = payload.fromEmail
-      var directMessageBox = directMessages.find(`[room='${roomName}']`)
-      directMessageBox.append(buildMessageNode(msg, fromEmail))
+      addMessage(msg, fromEmail, roomName)
     })
+  }
+
+  window.addMessage = function(msg, fromEmail, roomName) {
+    var directMessageBox = directMessages.find(`[room='${roomName}']`)
+    directMessageBox.append(buildMessageNode(msg, fromEmail))
   }
   
   window.buildMessageNode = function(msg, fromEmail) {

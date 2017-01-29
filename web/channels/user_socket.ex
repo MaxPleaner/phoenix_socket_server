@@ -32,9 +32,7 @@ defmodule Server.UserSocket do
   #
   # Returning `nil` makes this socket anonymous.
   def id(socket) do
-    IO.puts "socket id: "
-    IO.puts "users_socket:#{socket.assigns.current_user.email}"
-    "users_socket:#{socket.assigns.current_user.email}"
+    nil
   end
 
 end
