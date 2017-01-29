@@ -33,12 +33,11 @@ defmodule Server.RoomChannel do
     {:noreply, socket}
   end
 
-  def handle_in("direct_msg", %{"body" => body, "email" => email}, socket) do
-    room_id = Enum.sort([socket.assigns.current_user.email, email]) |> Enum.join("-")
-    IO.puts inspect room_id
+  def handle_in("direct_msg", %{"body" => body, "email" => toEmail}, socket) do
+    fromEmail = socket.assigns.current_user.email
+    room_id = Enum.sort([fromEmail, toEmail]) |> Enum.join("-")
     room_name = "direct_msg-" <> room_id
-    Server.Endpoint.broadcast("users_socket:#{email}", "new_msg", %{"body" => body, "email" => email})
-    push socket, room_name, %{"body" => body, "email" => email }
+    broadcast! socket, room_name, %{"body" => body, "fromEmail" => fromEmail }
     {:noreply, socket}
   end
 

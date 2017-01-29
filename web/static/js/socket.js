@@ -9,6 +9,14 @@ import {Socket} from "phoenix"
 
 function init() {
 
+  window.debugMode = true
+  channel.onMessage = function(event, payload) {
+    if (window.debugMode) {
+      console.log("debug: " + event)
+    }
+    return payload
+  }
+
   chatInput.on("keypress", event => {
     if(event.keyCode === 13){
       channel.push("global_msg", {body: chatInput.val()})
@@ -51,17 +59,19 @@ function init() {
 
   window.attachDirectMessageBox = function(toUserEmail) {
     var roomName = `direct_msg-${[currentUserEmail, toUserEmail].sort().join("-")}`
-    var directMessageBox = $(`
-      <div class="hidden direct-msg-box hidden" email='${toUserEmail}' room='${roomName}'>
-        <b>${toUserEmail} direct messages:</b>
-        <ul class='direct-msg-list'>
-        </ul>
-        <input class='send-direct-message' type='text' placeholder='send-direct-message'
-      </div>
-    `)
-    directMessages.append(directMessageBox)
-    addIncomingDirectMessageListener(roomName)
-    addOutgoingDirectMessageListener(directMessageBox)
+    if (directMessages.find(`[room='${roomName}']`).length == 0) {    
+      var directMessageBox = $(`
+        <div class="hidden direct-msg-box hidden" email='${toUserEmail}' room='${roomName}'>
+          <b>${toUserEmail} direct messages:</b>
+          <ul class='direct-msg-list'>
+          </ul>
+          <input class='send-direct-message' type='text' placeholder='send-direct-message'
+        </div>
+      `)
+      directMessages.append(directMessageBox)
+      addIncomingDirectMessageListener(roomName)
+      addOutgoingDirectMessageListener(directMessageBox)
+    }
   }
 
   window.removeDirectMessageBox = function(email) {
@@ -85,15 +95,15 @@ function init() {
   window.addIncomingDirectMessageListener = function(roomName) {
     channel.on( roomName, payload => {
       var msg = payload.body
-      var email = payload.email
+      var fromEmail = payload.fromEmail
       var directMessageBox = directMessages.find(`[room='${roomName}']`)
-      directMessageBox.append(buildMessageNode(msg, email))
+      directMessageBox.append(buildMessageNode(msg, fromEmail))
     })
   }
   
-  window.buildMessageNode = function(msg, email) {
+  window.buildMessageNode = function(msg, fromEmail) {
     return $(`
-      <li>${email} says: ${msg} </li>
+      <li>${fromEmail} says: ${msg} </li>
     `)
   }
 
