@@ -1,6 +1,6 @@
 # About
 
-There's a certain kind of app I like to build in order to learn a websocket framework. I've done it in Rails, Sinatra, Express, Meteor, and now Phoenix.
+There's a certain kind of app I like to build in order to learn a websocket framework. I've done it in Rails, Express, Meteor, and now Phoenix.
 
 Basically the app authenticates you, then shows you a list of online users. You can send them direct messages. That's the gist of it.
 
