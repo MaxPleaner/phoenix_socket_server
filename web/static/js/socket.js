@@ -17,19 +17,6 @@ function init() {
     return payload
   }
 
-  chatInput.on("keypress", event => {
-    if(event.keyCode === 13){
-      channel.push("global_msg", {body: chatInput.val()})
-      chatInput.val("")
-    }
-  })
-
-  channel.on("global_msg", payload => {
-    let messageItem = document.createElement("li");
-    messageItem.innerText = `[${Date()}] ${payload.body}`
-    messagesContainer.append(messageItem)
-  })
-
   window.attachUser = function(email) {
     var user = onlineUsers.find(`[email='${email}']`)
     if (user.length == 0) {

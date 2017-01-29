@@ -6,7 +6,6 @@
   <input type="submit" value="logout">
 </form>
 
-<input id="chat-input" type="text" placeholder="send global message"></input>
 
 <div id="messages"></div>
 

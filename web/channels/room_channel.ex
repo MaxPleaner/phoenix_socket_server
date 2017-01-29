@@ -27,11 +27,6 @@ defmodule Server.RoomChannel do
     )
     {:noreply, socket}
   end
- 
-  def handle_in("global_msg", %{"body" => body}, socket) do
-    broadcast! socket, "global_msg", %{body: body}
-    {:noreply, socket}
-  end
 
   def handle_in("direct_msg", %{"body" => body, "email" => toEmail}, socket) do
     fromEmail = socket.assigns.current_user.email
