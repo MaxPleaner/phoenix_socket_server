@@ -66,10 +66,9 @@ function init() {
   window.initialMessageLoad = function(directMessageBox, roomId) {
     var url = `${location.protocol}//${location.host}/messages`
     var params = { room: roomId }
-    console.log(url)
     $.get(url, params, function(response) {
       response.data.forEach(function(msg) {
-        addMessage(msg.body, msg.fromEmail, `direct_msg-${roomId}`)
+        addMessage(msg.body, msg.fromEmail, msg.id, `direct_msg-${roomId}`)
       })
     })
   }
@@ -96,20 +95,52 @@ function init() {
     channel.on( roomName, payload => {
       var msg = payload.body
       var fromEmail = payload.fromEmail
-      addMessage(msg, fromEmail, roomName)
+      var msgId = payload.id
+      addMessage(msg, fromEmail, msgId, roomName)
     })
   }
 
-  window.addMessage = function(msg, fromEmail, roomName) {
+  window.addMessage = function(msg, fromEmail, msgId, roomName) {
     var directMessageBox = directMessages.find(`[room='${roomName}']`)
-    directMessageBox.append(buildMessageNode(msg, fromEmail))
+    directMessageBox.append(buildMessageNode(msg, msgId, fromEmail))
+  }
+
+  window.addMsgDeleteListener = function(msgNode, msgId) {
+    var button = msgNode.find(".delete-msg")
+    button.on("click", (e) => {
+      if (confirm("are you sure?")){
+        sendDeleteMsgEvent(msgId, (data, status, xhr) => {
+          if (xhr.status == 200) {
+            msgNode.remove()  
+          }
+        })
+      }
+    })
+  }
+
+  window.sendDeleteMsgEvent = function(msgId, fn) {
+    var url = `${location.protocol}//${location.host}/messages/${msgId}`
+    $.ajax({
+      url: url,
+      data: {
+        "_csrf_token": csrfToken
+      },
+      type: "DELETE",
+      success: fn
+    })
   }
   
-  window.buildMessageNode = function(msg, fromEmail) {
-    return $(`
-      <li>${fromEmail} says: ${msg} </li>
+  window.buildMessageNode = function(msg, msgId, fromEmail) { 
+    var msgNode = $(`
+      <li>
+        <button class="delete-msg" msgId='${msgId}'>X</button>
+        ${fromEmail} says: ${msg}
+      </li>
     `)
+    addMsgDeleteListener(msgNode, msgId)
+    return msgNode
   }
+
 
   window.removeIncomingDirectMessageListener = function(email) {
     var roomName = `direct_msg-${[currentUserEmail, email].sort().join("-")}`
@@ -161,6 +192,7 @@ $(function(){
     window.messagesContainer = $("#messages")
     window.directMessages    = $("#direct-messages")
     window.onlineUsers       = $("#online-users")
+    window.csrfToken         = $("#csrf-token").attr("value")
 
     window.channel           = socket.channel("room:lobby", {})
 

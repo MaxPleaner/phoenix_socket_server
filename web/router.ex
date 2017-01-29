@@ -27,7 +27,7 @@ defmodule Server.Router do
   scope "/", Server do
     pipe_through [:browser]
     get "/", PageController, :index
-    resources "/messages", MessageController, only: [:index]
+    resources "/messages", MessageController, only: [:index, :delete]
   end
 
   # Other scopes may use custom stacks.

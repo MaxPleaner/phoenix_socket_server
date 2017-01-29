@@ -1,6 +1,7 @@
 defmodule Server.Message do
   use Server.Web, :model
 
+  @derive {Poison.Encoder, only: [:fromEmail, :body, :room, :id]}
   schema "messages" do
     field :fromEmail, :string
     field :body, :string

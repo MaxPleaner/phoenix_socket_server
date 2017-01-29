@@ -1,8 +1,10 @@
 <!-- This site requires Javascript -->
 
+<% csrf_token = get_csrf_token() %>
+
 <form action="/logout" method="POST">
   <input type="hidden" name="_method" value="DELETE">
-  <input type="hidden" name="_csrf_token" value="<%= get_csrf_token() %>">
+  <input type="hidden" name="_csrf_token" value="<%= csrf_token %>">
   <input type="submit" value="logout">
 </form>
 
@@ -15,3 +17,5 @@
 <div id="direct-messages"></div>
 
 <span id="page-authenticated" current-user-email='<%= current_user(@conn).email %>'></span>
+
+<span class="hidden" id="csrf-token" value="<%= csrf_token %>"></span>

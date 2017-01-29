@@ -26,4 +26,11 @@ defmodule Server.MessageView do
       reason: reason
     }
   end
+
+  def render("destroyed.json", %{message: message}) do
+    %{
+      message: message
+    }
+  end
+
 end
