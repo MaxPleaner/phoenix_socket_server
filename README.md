@@ -4,7 +4,9 @@ There's a certain kind of app I like to build in order to learn a websocket fram
 
 Basically the app authenticates you, then shows you a list of online users. You can send them direct messages. That's the gist of it.
 
-_note this is incomplete_
+This is deployed to heroku: [hidden-inlet-64920.herokuapp.com](https://hidden-inlet-64920.herokuapp.com)
+
+For a broad-level tutorial on how this site was put together, see [this writeup](./writeup.md)
 
 # Running
 
@@ -16,6 +18,8 @@ To start your Phoenix app:
   * Start Phoenix endpoint with `mix phoenix.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+
+Production
 
 Ready to run in production? Please [check our deployment guides](http://www.phoenixframework.org/docs/deployment).
 
