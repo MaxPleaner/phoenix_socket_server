@@ -1,6 +1,6 @@
 # About
 
-There's a certain kind of app I like to build in order to learn a websocket framework. I've done it in Rails, Express, Meteor, and now Phoenix.
+This is an app I built to practice / learn Phoenix and Elixir. There's very little pizazz - all the Javascript is in one 200-line file and there's hardly any CSS. But that's the way I like it. 
 
 Basically the app authenticates you, then shows you a list of online users. You can send them direct messages. That's the gist of it.
 
